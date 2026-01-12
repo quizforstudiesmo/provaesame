@@ -1756,7 +1756,8 @@
       "b": "<lista_numeri> ::= <numero> | <numero> \",\" <lista_numeri> | ε",
       "c": "<lista_numeri> ::= <numero> \",\" <numero> \",\" <numero>"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "Questa produzione BNF permette una singola occorrenza, una sequenza ricorsiva di numeri separati da virgole oppure la lista vuota ε."
   },
   {
     "id": 161,
@@ -1766,7 +1767,8 @@
       "b": "B = 24",
       "c": "B = 16"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "Seguendo il flusso dell’algoritmo, B risulta essere 24 al termine dell’esecuzione."
   },
   {
     "id": 162,
@@ -1776,7 +1778,8 @@
       "b": "surface web: 5%, deep web: 90%, dark web: 5%",
       "c": "surface web: 50%, deep web: 45%, dark web: 5%"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "La stragrande maggioranza dei contenuti risiede nel Deep Web (circa il 90%)."
   },
   {
     "id": 163,
@@ -1786,7 +1789,8 @@
       "b": "131 072",
       "c": "262 144"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "16 MB / 128 B = (16 * 1024 * 1024) / 128 = 131.072 parole."
   },
   {
     "id": 164,
@@ -1796,7 +1800,8 @@
       "b": "Scrivere il testo di un documento e salvarlo in un file in formato .tex, compilare il file per produrre un file .dvi, correggere eventuali errori, convertire il file .dvi in un file .pdf per visualizzare l’output",
       "c": "Scrivere → correzione → conversione PDF"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "Il flusso standard prevede la creazione del .tex, la compilazione in .dvi e la conversione finale in .pdf."
   },
   {
     "id": 165,
@@ -1806,7 +1811,8 @@
       "b": "11 settembre 2024 Buona mattina",
       "c": "Buon pomeriggio"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "Il codice concatena la data corrente con la stringa corrispondente alla fascia oraria mattutina."
   },
   {
     "id": 166,
@@ -1816,7 +1822,8 @@
       "b": "exe, mp3, jpg",
       "c": "iso, bin, dll"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "RTF, ODT e HTML sono formati che contengono testo formattato; CSS contiene testo per gli stili."
   },
   {
     "id": 167,
@@ -1826,7 +1833,8 @@
       "b": "Diagramma di flusso “B”",
       "c": "Diagramma di flusso “D”"
     },
-    "answer": "c"
+    "correct_answer": "c",
+    "feedback": "Il REPEAT esegue l'azione almeno una volta prima di controllare la condizione, come mostrato nel diagramma D."
   },
   {
     "id": 168,
@@ -1836,7 +1844,8 @@
       "b": "No",
       "c": "Solo se i numeri sono negativi"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "In 16 bit valore assoluto e segno, il massimo numero positivo è 32767 ($2^{15}-1$). 32768 causa overflow."
   },
   {
     "id": 169,
@@ -1846,147 +1855,162 @@
       "b": "Ridurre la luminosità dello schermo del 20% ogni 20 minuti",
       "c": "Usare gli schermi solo 20 minuti al giorno"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "È una pratica raccomandata dagli oculisti per ridurre lo stress visivo digitale."
   },
   {
     "id": 170,
-    [cite_start]"question": "Quali fra i seguenti elementi sono i componenti di base della Macchina di Von Neumann? [cite: 77]",
+    "question": "Quali fra i seguenti elementi sono i componenti di base della Macchina di Von Neumann?",
     "options": {
-      [cite_start]"a": "Tastiera, Monitor, Hard Disk [cite: 78]",
-      [cite_start]"b": "Unità di ingresso, Unità di uscita, Unità di Memoria, Unità di Controllo, Unità di Calcolo [cite: 79]",
-      [cite_start]"c": "CPU, GPU, RAM, ROM [cite: 80]"
+      "a": "Tastiera, Monitor, Hard Disk",
+      "b": "Unità di ingresso, Unità di uscita, Unità di Memoria, Unità di Controllo, Unità di Calcolo",
+      "c": "CPU, GPU, RAM, ROM"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "Questi sono i 5 moduli fondamentali descritti nel modello di Von Neumann."
   },
   {
     "id": 171,
-    [cite_start]"question": "Dato un alfabeto di 28 simboli, quanti bit occupa la stringa “prova_di_esame_del_21_luglio”? [cite: 84]",
+    "question": "Dato un alfabeto di 28 simboli, quanti bit occupa la stringa “prova_di_esame_del_21_luglio”?",
     "options": {
-      [cite_start]"a": "128 [cite: 85]",
-      [cite_start]"b": "140 [cite: 86]",
-      [cite_start]"c": "112 [cite: 87]"
+      "a": "128",
+      "b": "140",
+      "c": "112"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "28 simboli richiedono 5 bit ciascuno ($2^4 < 28 \le 2^5$). La stringa ha 28 caratteri: $28 \times 5 = 140$ bit."
   },
   {
     "id": 172,
-    "question": "Nella gestione dei dispositivi di I/O di un moderno Sistema Operativo (SO) esistono due entità distinte: controllore del dispositivo (componente HW) e driver del dispositivo (controparte SW del controllore), che svolgono le funzioni elencate. [cite_start]Qual è la funzione corretta? [cite: 91, 92]",
+    "question": "Nella gestione dei dispositivi di I/O esistono due entità: controllore (HW) e driver (SW). Qual è la funzione corretta?",
     "options": {
-      "a": "Il Controllore governa il dialogo con il dispositivo fisico; Il Controllore accetta le richieste di I/O provenienti dal processore; Il Driver dialoga con il Controllore per conto del SO; [cite_start]Il Driver può esercitare la politica di accesso al dispositivo [cite: 93, 94]",
-      [cite_start]"b": "Entrambi gestiscono solo l’interfaccia utente [cite: 95]",
-      [cite_start]"c": "Il driver controlla l’hardware e il controllore comunica con il SO [cite: 96]"
+      "a": "Il Controllore governa il dialogo con il dispositivo fisico; Il Controllore accetta le richieste di I/O provenienti dal processore; Il Driver dialoga con il Controllore per conto del SO; Il Driver può esercitare la politica di accesso al dispositivo",
+      "b": "Entrambi gestiscono solo l’interfaccia utente",
+      "c": "Il driver controlla l’hardware e il controllore comunica con il SO"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "Il controllore è l'interfaccia fisica, mentre il driver è il software che permette al SO di usarlo."
   },
   {
     "id": 173,
-    [cite_start]"question": "In una rappresentazione in valore assoluto e segno a 16 bit è possibile la seguente operazione aritmetica: 16385 +16385 = 32770? [cite: 100]",
+    "question": "In una rappresentazione in valore assoluto e segno a 16 bit è possibile la seguente operazione aritmetica: 16385 + 16385 = 32770?",
     "options": {
-      [cite_start]"a": "Sì [cite: 101]",
-      [cite_start]"b": "No, genera Overflow [cite: 102]",
-      [cite_start]"c": "Solo se i numeri sono negativi [cite: 103]"
+      "a": "Sì",
+      "b": "No, genera Overflow",
+      "c": "Solo se i numeri sono negativi"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "Il valore 32770 supera il limite massimo di 32767 per i 16 bit in modulo e segno."
   },
   {
     "id": 174,
-    [cite_start]"question": "Dato il flowchart di figura: e inserendo 3 voti di esami (N=3) che sono rispettivamente VOTO = 19, VOTO = 26, VOTO = 24, indicare che cosa produce in uscita. [cite: 107]",
+    "question": "Dato il flowchart con N=3 e VOTO = 19, 26, 24, indicare che cosa produce in uscita.",
     "options": {
-      [cite_start]"a": "La media = 23 [cite: 108]",
-      [cite_start]"b": "Il risultato è imprevedibile [cite: 109]",
-      [cite_start]"c": "La somma = 69 [cite: 110]"
+      "a": "La media = 23",
+      "b": "Il risultato è imprevedibile",
+      "c": "La somma = 69"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "Senza un'inizializzazione corretta delle variabili (come SOMMA=0) nel flowchart, il risultato finale è tecnicamente imprevedibile."
   },
   {
     "id": 175,
-    [cite_start]"question": "Come puoi applicare il concetto di “fair use” nel contesto del copyright? [cite: 114]",
+    "question": "Come puoi applicare il concetto di “fair use” nel contesto del copyright?",
     "options": {
-      [cite_start]"a": "Copiando interi libri senza autorizzazione [cite: 115]",
-      [cite_start]"b": "Impiegando il materiale in modo limitato per critica, commento, studio o informazione senza infrangere il copyright [cite: 116]",
-      [cite_start]"c": "Distribuendo materiale protetto a pagamento [cite: 117]"
+      "a": "Copiando interi libri senza autorizzazione",
+      "b": "Impiegando il materiale in modo limitato per critica, commento, studio o informazione senza infrangere il copyright",
+      "c": "Distribuendo materiale protetto a pagamento"
     },
-    "answer": "b"
+    "correct_answer": "b",
+    "feedback": "Il Fair Use permette l'uso di materiale protetto per scopi didattici o di critica senza fini di lucro."
   },
   {
     "id": 176,
-    [cite_start]"question": "Selezionare la definizione corretta di identità digitale. [cite: 121]",
+    "question": "Selezionare la definizione corretta di identità digitale.",
     "options": {
-      [cite_start]"a": "Nome utente e password [cite: 122]",
-      [cite_start]"b": "Indirizzo email [cite: 123]",
-      "c": "Rappresentazione elettronica univoca di un individuo, organizzazione o entità su Internet. [cite_start]Essa comprende le informazioni personali, autenticazioni digitali e autorizzazioni, consentendo l'accesso a servizi online in modo sicuro. [cite: 124, 125]"
+      "a": "Nome utente e password",
+      "b": "Indirizzo email",
+      "c": "Rappresentazione elettronica univoca di un individuo, organizzazione o entità su Internet. Essa comprende le informazioni personali, autenticazioni digitali e autorizzazioni."
     },
-    "answer": "c"
+    "correct_answer": "c",
+    "feedback": "L'identità digitale è l'insieme di dati che identificano un soggetto in modo univoco all'interno di un sistema informatico."
   },
   {
     "id": 177,
-    [cite_start]"question": "Ricordando che: 8b(bit)=1B(Byte), 1024B=1KB=2¹⁰B, 1MB=2²⁰B, 1GB=2³⁰B, 1TB=2⁴⁰B, selezionare tutte e solo le scelte corrette: [cite: 129]",
+    "question": "Selezionare tutte e solo le scelte corrette riguardo le unità di misura (1KB=2^10B, etc):",
     "options": {
-      "a": "Le risposte corrette sono: 2²⁰ B > 8 * 10 KB; 1024 B < 2²⁰ KB; 128*8 bit ≤ 128 B; 1GB ≠ 2³⁰ KB; [cite_start]8 GB > 1024 KB [cite: 130, 131]",
-      [cite_start]"b": "1GB = 230 KB [cite: 132]",
-      [cite_start]"c": "8 GB < 1024 KB [cite: 133]"
+      "a": "Le risposte corrette sono: 2^20 B > 8 * 10 KB; 1024 B < 2^20 KB; 128*8 bit <= 128 B; 1GB != 2^30 KB; 8 GB > 1024 KB",
+      "b": "1GB = 230 KB",
+      "c": "8 GB < 1024 KB"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "Analizzando le potenze di 2 e le conversioni bit/byte, la sequenza 'a' contiene i confronti corretti."
   },
   {
     "id": 178,
-    [cite_start]"question": "Fornire in binario il risultato dell’operazione binaria: 1000001 - 11110. [cite: 137]",
+    "question": "Fornire in binario il risultato dell’operazione binaria: 1000001 - 11110.",
     "options": {
-      [cite_start]"a": "100011 [cite: 138]",
-      [cite_start]"b": "101001 [cite: 139]",
-      [cite_start]"c": "110010 [cite: 140]"
+      "a": "100011",
+      "b": "101001",
+      "c": "110010"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "In decimale: 65 - 30 = 35. 35 in binario è 100011."
   },
   {
     "id": 179,
-    [cite_start]"question": "Data l'architettura gerarchica di un moderno sistema operativo, lo studenti indichi quali sono le funzionalità del livello di gestione dell'/0 per consentire ai programmi di accedere alle periferiche in modo astratto e uniforme. [cite: 144]",
+    "question": "Quali sono le funzionalità del livello di gestione dell'I/O per consentire ai programmi di accedere alle periferiche in modo astratto?",
     "options": {
-      [cite_start]"a": "Fornire un’interfaccia astratta per l’accesso alle periferiche, nascondendo i dettagli hardware tramite driver. [cite: 145]",
-      [cite_start]"b": "Controllare direttamente l’hardware senza software [cite: 146]",
-      [cite_start]"c": "Gestire solo la memoria [cite: 147]"
+      "a": "Fornire un’interfaccia astratta per l’accesso alle periferiche, nascondendo i dettagli hardware tramite driver.",
+      "b": "Controllare direttamente l’hardware senza software",
+      "c": "Gestire solo la memoria"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "Il SO astrae l'hardware permettendo ai programmi di usare comandi standard indipendentemente dal modello fisico della periferica."
   },
   {
     "id": 180,
-    "question": "Quale delle seguenti pratiche è più efficace per ottimizzare le immagini da inserire in una pagina web, riducendone le dimensioni senza compromettere significativamente la qualità visiva?",
+    "question": "Quale pratica è più efficace per ottimizzare le immagini web senza compromettere la qualità?",
     "options": {
-      "a": "Ridurre la risoluzione dell'immagine in modo che corrisponda alle dimensioni effettive di visualizzazione sulla pagina. Utilizzare formati di compressione efficienti come JPEG per le fotografie e PNG per grafici, loghi o immagini che richiedono trasparenza.",
+      "a": "Ridurre la risoluzione in modo che corrisponda alle dimensioni effettive di visualizzazione. Utilizzare JPEG per foto e PNG per grafiche con trasparenza.",
       "b": "Usare solo BMP",
       "c": "Ridurre il file senza modificare risoluzione"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "L'ottimizzazione bilancia risoluzione e formato di compressione per minimizzare il peso del file."
   },
   {
     "id": 181,
-    "question": "Un compilatore per un linguaggio di programmazione è composto dai seguenti blocchi funzionali ordinati dal linguaggio sorgente al linguaggio oggetto:",
+    "question": "Un compilatore è composto dai seguenti blocchi funzionali ordinati:",
     "options": {
       "a": "Scanner, parser, analizzatore semantico, ottimizzatore di codice, generatore di codice",
       "b": "Parser, debugger, editor",
       "c": "Editor, compilatore, link editor"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "Questa è la sequenza logica corretta della pipeline di compilazione."
   },
   {
     "id": 182,
     "question": "Quali fra le seguenti affermazioni su SEO e SERP sono vere?",
     "options": {
-      "a": "Ottimizzare i titoli delle pagine (tag title) è importante principalmente perché influenza la decisione degli utenti di cliccare o meno sul risultato. Per un'attività con sede fisica, ottenere recensioni positive online e avere il proprio indirizzo correttamente indicato su siti autorevoli è un fattore cruciale per il posizionamento nelle ricerche geolocalizzate. I link che altri siti affidabili inseriscono verso il tuo sito (backlink) sono considerati un \"voto di fiducia\" e aiutano il posizionamento SEO.",
+      "a": "L'ottimizzazione dei tag title, i backlink di qualità e le recensioni geolocalizzate sono fattori cruciali per il posizionamento.",
       "b": "Solo immagini influenzano il posizionamento",
       "c": "I backlink non influenzano il ranking"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "La SEO si basa su molteplici fattori on-page (titoli) e off-page (backlink e segnali locali)."
   },
   {
     "id": 183,
-    "question": "Data l'architettura gerarchica di un moderno sistema operativo, lo studente indichi quali sono le funzionalità del livello di gestione della memoria per consentire ai processi di utilizzare la memoria in modo efficiente e sicuro.",
+    "question": "Quali sono le funzionalità del livello di gestione della memoria di un sistema operativo?",
     "options": {
-      "a": "- Mappare gli indirizzi logici degli spazi di indirizzamento dei processi sugli indirizzi fisici della RAM. - Implementare il meccanismo della memoria virtuale per far credere a ogni processo di avere a disposizione più memoria di quella fisicamente disponibile. - Proteggere la memoria di un processo dall'accesso non autorizzato da parte di altri processi.",
+      "a": "Mappare indirizzi logici su fisici, implementare la memoria virtuale e proteggere lo spazio di indirizzamento dei processi.",
       "b": "Gestire solo file di sistema",
       "c": "Gestire solo i processi"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "Permette un uso sicuro ed efficiente della RAM e implementa la memoria virtuale."
   },
   {
     "id": 184,
@@ -1996,7 +2020,8 @@
       "b": "Diagramma di flusso “B”",
       "c": "Diagramma di flusso “C”"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "Il WHILE controlla la condizione prima di eseguire l’azione, come rappresentato nel diagramma A."
   },
   {
     "id": 185,
@@ -2006,20 +2031,21 @@
       "b": "Inizia con \\documentclass e termina con \\documentend",
       "c": "Solo file .txt con estensione .tex"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "Il corpo del documento deve essere sempre racchiuso nell'ambiente 'document'."
   },
   {
     "id": 186,
-    "question": "Fornire in binario il risultato dell’operazione binaria: 1000001 -11111.",
+    "question": "Fornire in binario il risultato dell’operazione binaria: 1000001 - 11111.",
     "options": {
       "a": "100010",
       "b": "100011",
       "c": "101001"
     },
-    "answer": "a"
+    "correct_answer": "a",
+    "feedback": "In decimale: 65 - 31 = 34. 34 in binario è 100010."
   }
 ]
-
 
 
 
