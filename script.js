@@ -1,10 +1,10 @@
 let questions = [];
 let currentQuestionIndex = 0;
 let score = 0;
-let wrongQuestions = []; 
-const totalQuestions = 30; 
+let wrongQuestions = []; // Array per tracciare le domande sbagliate
+const totalQuestions = 30; // Numero totale di domande per quiz
 
-// Funzione per mescolare l'ordine (Fisher-Yates Shuffle)
+// Funzione per mescolare un array
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -13,47 +13,46 @@ function shuffle(array) {
     return array;
 }
 
-// Carica il file JSON con gestione errori migliorata
+// Carica il file JSON e gestisce la selezione 22 (vecchie) + 8 (nuove)
 fetch('question.json')
     .then(response => {
-        if (!response.ok) throw new Error("File question.json non trovato o errore server.");
-        return response.text(); // Carichiamo come testo per pulirlo prima del parsing
+        if (!response.ok) throw new Error("Errore nel caricamento del file JSON");
+        return response.json();
     })
-    .then(text => {
-        try {
-            // Ripara eventuali backslash LaTeX non correttamente raddoppiati nel JSON
-            const cleanedText = text.replace(/\\(?!"|\\|\/|b|f|n|r|t|u)/g, "\\\\");
-            const data = JSON.parse(cleanedText);
+    .then(data => {
+        // 1. Dividiamo le domande in due gruppi (pool) basandoci sugli ID
+        const poolVecchio = data.filter(q => q.id >= 1 && q.id <= 159);
+        const poolNuovo = data.filter(q => q.id >= 160 && q.id <= 186);
 
-            // Logica 22 domande (ID 1-159) + 8 domande (ID 160-186)
-            const poolVecchio = data.filter(q => q.id >= 1 && q.id <= 159);
-            const poolNuovo = data.filter(q => q.id >= 160 && q.id <= 186);
+        // 2. Mescoliamo i due gruppi separatamente per pescare ogni volta domande diverse
+        shuffle(poolVecchio);
+        shuffle(poolNuovo);
 
-            shuffle(poolVecchio);
-            shuffle(poolNuovo);
+        // 3. Selezioniamo 22 domande dal vecchio blocco e 8 dal nuovo blocco
+        const selectedVecchio = poolVecchio.slice(0, 22);
+        const selectedNuovo = poolNuovo.slice(0, 8);
 
-            // Unione dei due gruppi
-            questions = shuffle([...poolVecchio.slice(0, 22), ...poolNuovo.slice(0, 8)]);
+        // 4. Uniamo le due selezioni e rimescoliamo il tutto (così l'ordine nel quiz è casuale)
+        const combinedSelection = [...selectedVecchio, ...selectedNuovo];
+        questions = shuffle(combinedSelection);
 
-            startQuiz();
-        } catch (e) {
-            throw new Error("Errore nel formato dei dati JSON: " + e.message);
-        }
+        startQuiz();
     })
-    .catch(error => {
-        console.error(error);
-        document.getElementById('question').innerHTML = `<span style="color:red">${error.message}</span>`;
-    });
+    .catch(error => console.error('Errore nel caricamento del file JSON:', error));
 
+// Avvia il quiz
 function startQuiz() {
     currentQuestionIndex = 0;
     score = 0;
-    wrongQuestions = [];
+    wrongQuestions = []; // Resetta le domande sbagliate
+    document.getElementById('final-score').textContent = '';
     document.getElementById('result').classList.add('hidden');
     document.getElementById('quiz-container').classList.remove('hidden');
+    document.getElementById('feedback').textContent = ''; // Resetta il feedback
     showQuestion();
 }
 
+// Mostra la domanda corrente
 function showQuestion() {
     if (currentQuestionIndex >= questions.length) {
         endGame();
@@ -61,62 +60,78 @@ function showQuestion() {
     }
 
     const question = questions[currentQuestionIndex];
-    document.getElementById('question-counter').textContent = `Domanda ${currentQuestionIndex + 1} di ${questions.length}`;
     document.getElementById('question').textContent = question.question;
-    
     const answersElement = document.getElementById('answers');
-    answersElement.innerHTML = '';
-    document.getElementById('feedback').innerHTML = '';
-    document.getElementById('next-question').classList.add('hidden');
+    answersElement.innerHTML = ''; // Reset delle risposte
+    document.getElementById('feedback').textContent = ''; // Nasconde feedback precedente
 
+    // Visualizza le risposte senza lettere precedenti
     Object.entries(question.options).forEach(([key, answer]) => {
         const button = document.createElement('button');
-        button.textContent = answer;
-        button.onclick = () => checkAnswer(key, button);
+        button.textContent = `${answer}`; // Mostra solo la risposta
+        button.addEventListener('click', () => checkAnswer(key));
         answersElement.appendChild(button);
     });
+
+    document.getElementById('question-counter').textContent = `Domanda ${currentQuestionIndex + 1} di ${totalQuestions}`;
 }
 
-function checkAnswer(selectedKey, clickedButton) {
+// Controlla se la risposta selezionata è corretta
+function checkAnswer(selectedKey) {
     const question = questions[currentQuestionIndex];
-    const correctKey = question.correct_answer;
-    const buttons = document.querySelectorAll('#answers button');
+    const correctKey = question.correct_answer; // Allineamento alla chiave del file JSON
 
-    buttons.forEach(btn => {
-        btn.disabled = true;
-        // Se il testo del bottone corrisponde alla risposta corretta nel JSON
-        if (btn.textContent === question.options[correctKey]) {
-            btn.classList.add('correct');
+    const answers = document.querySelectorAll('.answers button');
+    answers.forEach(button => {
+        button.disabled = true;
+        if (button.textContent === question.options[correctKey]) {
+            button.classList.add('correct');
+        } else if (question.options[selectedKey] === button.textContent) {
+            button.classList.add('incorrect');
         }
     });
 
     if (selectedKey === correctKey) {
         score++;
     } else {
-        clickedButton.classList.add('incorrect');
-        wrongQuestions.push(`<strong>${question.question}</strong><br>Risposta corretta: ${question.options[correctKey]}`);
+        // Aggiunge la domanda sbagliata all'elenco
+        wrongQuestions.push(
+            `<strong>${question.question}</strong>: Risposta corretta - ${question.options[correctKey]}`
+        );
     }
 
+    // Mostra solo la spiegazione come feedback
     const feedbackElement = document.getElementById('feedback');
-    feedbackElement.innerHTML = question.feedback ? `<em>Spiegazione:</em> ${question.feedback}` : '';
+    feedbackElement.textContent = question.feedback;
+
+    // Mostra il pulsante per proseguire
     document.getElementById('next-question').classList.remove('hidden');
 }
 
-document.getElementById('next-question').onclick = () => {
+// Passa alla domanda successiva manualmente
+document.getElementById('next-question').addEventListener('click', () => {
     currentQuestionIndex++;
     showQuestion();
-};
+});
 
+// Mostra i risultati finali
 function endGame() {
     document.getElementById('quiz-container').classList.add('hidden');
     const resultElement = document.getElementById('result');
     resultElement.classList.remove('hidden');
-    document.getElementById('final-score').textContent = score;
 
+    // Mostra il punteggio finale
+    document.getElementById('final-score').textContent = `Hai totalizzato ${score} punti su ${totalQuestions}!`;
+
+    // Mostra le domande sbagliate
     if (wrongQuestions.length > 0) {
-        const div = document.createElement('div');
-        div.id = 'wrong-summary';
-        div.innerHTML = `<h3>Domande da ripassare:</h3><ul>${wrongQuestions.map(q => `<li>${q}</li>`).join('')}</ul>`;
-        resultElement.appendChild(div);
+        const wrongQuestionsContainer = document.createElement('div');
+        wrongQuestionsContainer.innerHTML = `
+            <h3>Domande sbagliate:</h3>
+            <ul>
+                ${wrongQuestions.map(q => `<li>${q}</li>`).join('')}
+            </ul>
+        `;
+        resultElement.appendChild(wrongQuestionsContainer);
     }
 }
