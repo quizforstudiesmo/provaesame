@@ -13,28 +13,13 @@ function shuffle(array) {
     return array;
 }
 
-// Carica il file JSON e gestisce la selezione 22 (vecchie) + 8 (nuove)
+// Carica il file JSON
 fetch('question.json')
-    .then(response => {
-        if (!response.ok) throw new Error("Errore nel caricamento del file JSON");
-        return response.json();
-    })
+    .then(response => response.json())
     .then(data => {
-        // 1. Dividiamo le domande in due gruppi (pool) basandoci sugli ID
-        const poolVecchio = data.filter(q => q.id >= 1 && q.id <= 159);
-        const poolNuovo = data.filter(q => q.id >= 160 && q.id <= 186);
-
-        // 2. Mescoliamo i due gruppi separatamente per pescare ogni volta domande diverse
-        shuffle(poolVecchio);
-        shuffle(poolNuovo);
-
-        // 3. Selezioniamo 22 domande dal vecchio blocco e 8 dal nuovo blocco
-        const selectedVecchio = poolVecchio.slice(0, 22);
-        const selectedNuovo = poolNuovo.slice(0, 8);
-
-        // 4. Uniamo le due selezioni e rimescoliamo il tutto (così l'ordine nel quiz è casuale)
-        const combinedSelection = [...selectedVecchio, ...selectedNuovo];
-        questions = shuffle(combinedSelection);
+        // Filtra e seleziona casualmente le domande
+        const selectedQuestions = shuffle(data.filter(q => q.id >= 1 && q.id <= 186)).slice(0, totalQuestions);
+        questions = shuffle(selectedQuestions);
 
         startQuiz();
     })
