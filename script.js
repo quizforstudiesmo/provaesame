@@ -4,7 +4,7 @@ let score = 0;
 let wrongQuestions = []; // Array per tracciare le domande sbagliate
 const totalQuestions = 30; // Numero totale di domande per quiz
 
-// Funzione per mescolare un array (Fisher-Yates Shuffle)
+// Funzione per mescolare un array
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -13,28 +13,24 @@ function shuffle(array) {
     return array;
 }
 
-// Carica il file JSON e gestisce la selezione 22 + 8
+// Carica il file JSON con logica 22 + 8
 fetch('question.json')
     .then(response => response.json())
     .then(data => {
-        // 1. Dividiamo le domande in base agli ID richiesti
+        // 1. Dividiamo le domande in due gruppi
         const poolVecchio = data.filter(q => q.id >= 1 && q.id <= 159);
         const poolNuovo = data.filter(q => q.id >= 160 && q.id <= 186);
 
-        // 2. Mescoliamo i due gruppi separatamente
+        // 2. Mescoliamo entrambi i gruppi
         shuffle(poolVecchio);
         shuffle(poolNuovo);
 
-        // 3. Prendiamo esattamente 22 domande dal vecchio e 8 dal nuovo
-        // Usiamo .slice per estrarre la quantità desiderata
+        // 3. Selezioniamo 22 dal vecchio e 8 dal nuovo
         const selectedVecchio = poolVecchio.slice(0, 22);
         const selectedNuovo = poolNuovo.slice(0, 8);
 
-        // 4. Uniamo i due gruppi per formare il quiz da 30
+        // 4. Uniamo e mescoliamo la selezione finale
         const combinedSelection = [...selectedVecchio, ...selectedNuovo];
-
-        // 5. Mescoliamo la selezione finale affinché l'ordine delle domande 
-        // durante il quiz sia casuale (non tutte le nuove alla fine)
         questions = shuffle(combinedSelection);
 
         startQuiz();
@@ -49,50 +45,66 @@ function startQuiz() {
     document.getElementById('final-score').textContent = '';
     document.getElementById('result').classList.add('hidden');
     document.getElementById('quiz-container').classList.remove('hidden');
+    document.getElementById('feedback').textContent = ''; // Resetta il feedback
+    
+    // Rimuove eventuali riepiloghi precedenti dal div result
+    const existingSummary = document.querySelector('#result div');
+    if (existingSummary) existingSummary.remove();
+    
     showQuestion();
 }
 
 // Mostra la domanda corrente
 function showQuestion() {
-    const feedbackElement = document.getElementById('feedback');
-    feedbackElement.textContent = ''; // Resetta il feedback
-    document.getElementById('next-question').classList.add('hidden'); // Nasconde il tasto "Prossima"
+    if (currentQuestionIndex >= questions.length) {
+        endGame();
+        return;
+    }
 
     const question = questions[currentQuestionIndex];
-    document.getElementById('question-counter').textContent = `Domanda ${currentQuestionIndex + 1} di ${questions.length}`;
     document.getElementById('question').textContent = question.question;
-
     const answersElement = document.getElementById('answers');
-    answersElement.innerHTML = ''; // Pulisce le risposte precedenti
+    answersElement.innerHTML = ''; // Reset delle risposte
+    document.getElementById('feedback').textContent = ''; 
+    document.getElementById('next-question').classList.add('hidden'); // Nasconde tasto prossima
 
-    // Crea i pulsanti per le opzioni
-    Object.keys(question.options).forEach(key => {
+    // Visualizza le risposte senza lettere precedenti
+    Object.entries(question.options).forEach(([key, answer]) => {
         const button = document.createElement('button');
-        button.textContent = `${key.toUpperCase()}: ${question.options[key]}`;
-        button.classList.add('answer-btn');
-        button.addEventListener('click', () => selectAnswer(key, question));
+        button.textContent = `${answer}`; // Mostra solo la risposta
+        button.addEventListener('click', () => checkAnswer(key));
         answersElement.appendChild(button);
     });
+
+    document.getElementById('question-counter').textContent = `Domanda ${currentQuestionIndex + 1} di ${questions.length}`;
 }
 
-// Gestisce la selezione della risposta
-function selectAnswer(selectedKey, question) {
-    // Determina la chiave corretta (gestisce sia "answer" che "correct_answer")
-    const correctKey = question.answer || question.correct_answer;
-    
-    const buttons = document.querySelectorAll('.answer-btn');
-    buttons.forEach(btn => btn.disabled = true); // Disabilita i pulsanti dopo la scelta
+// Controlla se la risposta selezionata è corretta
+function checkAnswer(selectedKey) {
+    const question = questions[currentQuestionIndex];
+    // Supporta sia 'correct_answer' che 'answer' come chiavi nel JSON
+    const correctKey = question.correct_answer || question.answer; 
+
+    const answers = document.querySelectorAll('#answers button');
+    answers.forEach(button => {
+        button.disabled = true;
+        if (button.textContent === question.options[correctKey]) {
+            button.classList.add('correct');
+        } else if (question.options[selectedKey] === button.textContent) {
+            button.classList.add('incorrect');
+        }
+    });
 
     if (selectedKey === correctKey) {
         score++;
     } else {
-        // Aggiunge la domanda sbagliata all'elenco per il riepilogo finale
+        // Aggiunge la domanda sbagliata all'elenco
         wrongQuestions.push(
-            `<strong>${question.question}</strong><br>Risposta corretta: ${correctKey.toUpperCase()} - ${question.options[correctKey]}`
+            `<strong>${question.question}</strong>: Risposta corretta - ${question.options[correctKey]}`
         );
     }
 
-    // Mostra il feedback (spiegazione) se presente
+    // Mostra solo la spiegazione come feedback
     const feedbackElement = document.getElementById('feedback');
     feedbackElement.innerHTML = question.feedback ? `<em>Spiegazione:</em> ${question.feedback}` : '';
 
@@ -100,41 +112,31 @@ function selectAnswer(selectedKey, question) {
     document.getElementById('next-question').classList.remove('hidden');
 }
 
-// Passa alla domanda successiva
+// Passa alla domanda successiva manualmente
 document.getElementById('next-question').addEventListener('click', () => {
     currentQuestionIndex++;
-    if (currentQuestionIndex < questions.length) {
-        showQuestion();
-    } else {
-        endGame();
-    }
+    showQuestion();
 });
 
 // Mostra i risultati finali
 function endGame() {
     document.getElementById('quiz-container').classList.add('hidden');
-    document.getElementById('question-counter').classList.add('hidden');
+    document.getElementById('question-counter').classList.add('hidden'); // Nasconde il contatore alla fine
     const resultElement = document.getElementById('result');
     resultElement.classList.remove('hidden');
 
     // Mostra il punteggio finale
-    document.getElementById('final-score').textContent = `${score} su ${questions.length}`;
+    document.getElementById('final-score').textContent = `Hai totalizzato ${score} punti su ${questions.length}!`;
 
-    // Mostra il riepilogo delle domande sbagliate
+    // Mostra le domande sbagliate
     if (wrongQuestions.length > 0) {
-        let wrongHtml = '<h3>Domande da ripassare:</h3><ul>';
-        wrongQuestions.forEach(q => {
-            wrongHtml += `<li style="margin-bottom: 10px;">${q}</li>`;
-        });
-        wrongHtml += '</ul>';
-        
-        // Evita di duplicare il contenitore se si rigioca
-        const existingWrong = document.getElementById('wrong-summary');
-        if (existingWrong) existingWrong.remove();
-        
-        const summaryDiv = document.createElement('div');
-        summaryDiv.id = 'wrong-summary';
-        summaryDiv.innerHTML = wrongHtml;
-        resultElement.appendChild(summaryDiv);
+        const wrongQuestionsContainer = document.createElement('div');
+        wrongQuestionsContainer.innerHTML = `
+            <h3>Domande sbagliate:</h3>
+            <ul style="text-align: left; display: inline-block;">
+                ${wrongQuestions.map(q => `<li style="margin-bottom: 10px;">${q}</li>`).join('')}
+            </ul>
+        `;
+        resultElement.appendChild(wrongQuestionsContainer);
     }
 }
