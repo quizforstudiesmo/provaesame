@@ -13,23 +13,23 @@ function shuffle(array) {
     return array;
 }
 
-// Carica il file JSON con logica 22 + 8
+// Carica il file JSON con logica di selezione 22 + 8
 fetch('question.json')
     .then(response => response.json())
     .then(data => {
-        // 1. Dividiamo le domande in due gruppi
+        // 1. Separiamo le domande in due pool (gruppi)
         const poolVecchio = data.filter(q => q.id >= 1 && q.id <= 159);
         const poolNuovo = data.filter(q => q.id >= 160 && q.id <= 186);
 
-        // 2. Mescoliamo entrambi i gruppi
+        // 2. Mescoliamo entrambi i pool
         shuffle(poolVecchio);
         shuffle(poolNuovo);
 
-        // 3. Selezioniamo 22 dal vecchio e 8 dal nuovo
+        // 3. Selezioniamo 22 domande dal vecchio e 8 dal nuovo
         const selectedVecchio = poolVecchio.slice(0, 22);
         const selectedNuovo = poolNuovo.slice(0, 8);
 
-        // 4. Uniamo e mescoliamo la selezione finale
+        // 4. Uniamo le selezioni e mescoliamo il risultato finale
         const combinedSelection = [...selectedVecchio, ...selectedNuovo];
         questions = shuffle(combinedSelection);
 
@@ -47,7 +47,7 @@ function startQuiz() {
     document.getElementById('quiz-container').classList.remove('hidden');
     document.getElementById('feedback').textContent = ''; // Resetta il feedback
     
-    // Rimuove eventuali riepiloghi precedenti dal div result
+    // Rimuove eventuali riepiloghi di errori precedenti
     const existingSummary = document.querySelector('#result div');
     if (existingSummary) existingSummary.remove();
     
@@ -66,12 +66,12 @@ function showQuestion() {
     const answersElement = document.getElementById('answers');
     answersElement.innerHTML = ''; // Reset delle risposte
     document.getElementById('feedback').textContent = ''; 
-    document.getElementById('next-question').classList.add('hidden'); // Nasconde tasto prossima
+    document.getElementById('next-question').classList.add('hidden'); 
 
-    // Visualizza le risposte senza lettere precedenti
+    // Visualizza le risposte senza lettere
     Object.entries(question.options).forEach(([key, answer]) => {
         const button = document.createElement('button');
-        button.textContent = `${answer}`; // Mostra solo la risposta
+        button.textContent = `${answer}`; 
         button.addEventListener('click', () => checkAnswer(key));
         answersElement.appendChild(button);
     });
@@ -82,7 +82,7 @@ function showQuestion() {
 // Controlla se la risposta selezionata è corretta
 function checkAnswer(selectedKey) {
     const question = questions[currentQuestionIndex];
-    // Supporta sia 'correct_answer' che 'answer' come chiavi nel JSON
+    // Supporta sia 'correct_answer' che 'answer' per compatibilità
     const correctKey = question.correct_answer || question.answer; 
 
     const answers = document.querySelectorAll('#answers button');
@@ -104,7 +104,7 @@ function checkAnswer(selectedKey) {
         );
     }
 
-    // Mostra solo la spiegazione come feedback
+    // Mostra la spiegazione
     const feedbackElement = document.getElementById('feedback');
     feedbackElement.innerHTML = question.feedback ? `<em>Spiegazione:</em> ${question.feedback}` : '';
 
@@ -112,7 +112,7 @@ function checkAnswer(selectedKey) {
     document.getElementById('next-question').classList.remove('hidden');
 }
 
-// Passa alla domanda successiva manualmente
+// Passa alla domanda successiva
 document.getElementById('next-question').addEventListener('click', () => {
     currentQuestionIndex++;
     showQuestion();
@@ -121,18 +121,17 @@ document.getElementById('next-question').addEventListener('click', () => {
 // Mostra i risultati finali
 function endGame() {
     document.getElementById('quiz-container').classList.add('hidden');
-    document.getElementById('question-counter').classList.add('hidden'); // Nasconde il contatore alla fine
     const resultElement = document.getElementById('result');
     resultElement.classList.remove('hidden');
 
     // Mostra il punteggio finale
     document.getElementById('final-score').textContent = `Hai totalizzato ${score} punti su ${questions.length}!`;
 
-    // Mostra le domande sbagliate
+    // Mostra le domande sbagliate in modo pulito
     if (wrongQuestions.length > 0) {
         const wrongQuestionsContainer = document.createElement('div');
         wrongQuestionsContainer.innerHTML = `
-            <h3>Domande sbagliate:</h3>
+            <h3>Domande da ripassare:</h3>
             <ul style="text-align: left; display: inline-block;">
                 ${wrongQuestions.map(q => `<li style="margin-bottom: 10px;">${q}</li>`).join('')}
             </ul>
