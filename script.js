@@ -4,6 +4,7 @@ let score = 0;
 let wrongQuestions = []; 
 const totalQuestions = 30; 
 
+// Funzione per mescolare l'ordine (Fisher-Yates Shuffle)
 function shuffle(array) {
     for (let i = array.length - 1; i > 0; i--) {
         const j = Math.floor(Math.random() * (i + 1));
@@ -12,39 +13,36 @@ function shuffle(array) {
     return array;
 }
 
+// Carica il file JSON con gestione errori migliorata
 fetch('question.json')
     .then(response => {
-        if (!response.ok) throw new Error("File question.json non trovato sul server");
-        return response.json();
+        if (!response.ok) throw new Error("File question.json non trovato o errore server.");
+        return response.text(); // Carichiamo come testo per pulirlo prima del parsing
     })
-    .then(data => {
-        // Logica 22 + 8
-        const poolA = data.filter(q => q.id >= 1 && q.id <= 159);
-        const poolB = data.filter(q => q.id >= 160 && q.id <= 186);
+    .then(text => {
+        try {
+            // Ripara eventuali backslash LaTeX non correttamente raddoppiati nel JSON
+            const cleanedText = text.replace(/\\(?!"|\\|\/|b|f|n|r|t|u)/g, "\\\\");
+            const data = JSON.parse(cleanedText);
 
-        if (poolA.length < 22 || poolB.length < 8) {
-            console.warn("Attenzione: pool domande insufficiente per 22+8");
+            // Logica 22 domande (ID 1-159) + 8 domande (ID 160-186)
+            const poolVecchio = data.filter(q => q.id >= 1 && q.id <= 159);
+            const poolNuovo = data.filter(q => q.id >= 160 && q.id <= 186);
+
+            shuffle(poolVecchio);
+            shuffle(poolNuovo);
+
+            // Unione dei due gruppi
+            questions = shuffle([...poolVecchio.slice(0, 22), ...poolNuovo.slice(0, 8)]);
+
+            startQuiz();
+        } catch (e) {
+            throw new Error("Errore nel formato dei dati JSON: " + e.message);
         }
-
-        shuffle(poolA);
-        shuffle(poolB);
-
-        const selectedA = poolA.slice(0, 22);
-        const selectedB = poolB.slice(0, 8);
-
-        questions = shuffle([...selectedA, ...selectedB]);
-        startQuiz();
     })
     .catch(error => {
-        // Questo ti dice l'errore esatto nella console (F12)
-        console.error("Errore dettagliato:", error);
-        document.getElementById('question').innerHTML = 
-            `<div style="color:red; font-size:16px;">
-                Impossibile caricare il quiz.<br>
-                1. Assicurati di usare un server locale (es. Live Server).<br>
-                2. Controlla che non ci siano errori di virgole nel JSON.<br>
-                <small>Errore: ${error.message}</small>
-            </div>`;
+        console.error(error);
+        document.getElementById('question').innerHTML = `<span style="color:red">${error.message}</span>`;
     });
 
 function startQuiz() {
@@ -53,9 +51,6 @@ function startQuiz() {
     wrongQuestions = [];
     document.getElementById('result').classList.add('hidden');
     document.getElementById('quiz-container').classList.remove('hidden');
-    document.getElementById('feedback').textContent = '';
-    const oldSummary = document.getElementById('wrong-summary');
-    if (oldSummary) oldSummary.remove();
     showQuestion();
 }
 
@@ -64,40 +59,42 @@ function showQuestion() {
         endGame();
         return;
     }
+
     const question = questions[currentQuestionIndex];
+    document.getElementById('question-counter').textContent = `Domanda ${currentQuestionIndex + 1} di ${questions.length}`;
     document.getElementById('question').textContent = question.question;
+    
     const answersElement = document.getElementById('answers');
     answersElement.innerHTML = '';
-    document.getElementById('feedback').textContent = '';
+    document.getElementById('feedback').innerHTML = '';
     document.getElementById('next-question').classList.add('hidden');
 
     Object.entries(question.options).forEach(([key, answer]) => {
         const button = document.createElement('button');
         button.textContent = answer;
-        button.addEventListener('click', () => checkAnswer(key));
+        button.onclick = () => checkAnswer(key, button);
         answersElement.appendChild(button);
     });
-    document.getElementById('question-counter').textContent = `Domanda ${currentQuestionIndex + 1} di ${questions.length}`;
 }
 
-function checkAnswer(selectedKey) {
+function checkAnswer(selectedKey, clickedButton) {
     const question = questions[currentQuestionIndex];
     const correctKey = question.correct_answer;
-    const answers = document.querySelectorAll('#answers button');
-    
-    answers.forEach(button => {
-        button.disabled = true;
-        if (button.textContent === question.options[correctKey]) {
-            button.classList.add('correct');
-        } else if (question.options[selectedKey] === button.textContent) {
-            button.classList.add('incorrect');
+    const buttons = document.querySelectorAll('#answers button');
+
+    buttons.forEach(btn => {
+        btn.disabled = true;
+        // Se il testo del bottone corrisponde alla risposta corretta nel JSON
+        if (btn.textContent === question.options[correctKey]) {
+            btn.classList.add('correct');
         }
     });
 
     if (selectedKey === correctKey) {
         score++;
     } else {
-        wrongQuestions.push(`<strong>${question.question}</strong>: ${question.options[correctKey]}`);
+        clickedButton.classList.add('incorrect');
+        wrongQuestions.push(`<strong>${question.question}</strong><br>Risposta corretta: ${question.options[correctKey]}`);
     }
 
     const feedbackElement = document.getElementById('feedback');
@@ -105,10 +102,10 @@ function checkAnswer(selectedKey) {
     document.getElementById('next-question').classList.remove('hidden');
 }
 
-document.getElementById('next-question').addEventListener('click', () => {
+document.getElementById('next-question').onclick = () => {
     currentQuestionIndex++;
     showQuestion();
-});
+};
 
 function endGame() {
     document.getElementById('quiz-container').classList.add('hidden');
@@ -119,7 +116,7 @@ function endGame() {
     if (wrongQuestions.length > 0) {
         const div = document.createElement('div');
         div.id = 'wrong-summary';
-        div.innerHTML = `<h3>Errori:</h3><ul>${wrongQuestions.map(q => `<li>${q}</li>`).join('')}</ul>`;
+        div.innerHTML = `<h3>Domande da ripassare:</h3><ul>${wrongQuestions.map(q => `<li>${q}</li>`).join('')}</ul>`;
         resultElement.appendChild(div);
     }
 }
