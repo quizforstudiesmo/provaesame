@@ -1878,7 +1878,7 @@
       "c": "112"
     },
     "correct_answer": "b",
-    "feedback": "28 simboli richiedono 5 bit ciascuno ($2^4 < 28 \le 2^5$). La stringa ha 28 caratteri: $28 \times 5 = 140$ bit."
+    "feedback": "28 simboli richiedono 5 bit ciascuno ($2^4 < 28 le 2^5$). La stringa ha 28 caratteri: $28 \times 5 = 140$ bit."
   },
   {
     "id": 172,
